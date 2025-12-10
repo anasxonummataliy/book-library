@@ -5,6 +5,8 @@ import asyncio
 
 
 from aiogram import Bot, Dispatcher
+from aiogram.filters import CommandStart
+from aiogram.types import Message
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,6 +22,10 @@ async def startup(bot: Bot):
 @dp.shutdown()
 async def shutdown(bot: Bot):
     await bot.send_message(chat_id=ADMIN, text='Bot stopped❌')
+
+@dp.message(CommandStart)
+async def start_handler(msg: Message):
+    await msg.answer(f"Salom {msg.from_user.first_name}")
 
 async def main():
     await dp.start_polling(bot)
