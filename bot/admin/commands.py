@@ -1,8 +1,10 @@
 from aiogram.types import BotCommand
 
-
-commands = [
-    BotCommand(command='/start', description='Botni boshlash'),
-    BotCommand(command='/help', description='Yordam'),
-    BotCommand(command='/reply', description='userga xabar yuborish'),
+admin_commands = [
+    BotCommand(command="/start", description="Boshlash🏁"),
+    BotCommand(command="/users", description="User list📚"),
+    BotCommand(command="/channels", description="Channel list📢"),
+    BotCommand(command="/add_channel", description="Majburiy kanal qo'shish➕"),
+    BotCommand(command="/broadcast", description="Hamma userlar uchun xabar yuborish📢"),
+    BotCommand(command="/reply", description="Bitta userga xabar yuborish"),
 ]
