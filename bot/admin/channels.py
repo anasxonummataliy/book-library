@@ -7,6 +7,11 @@ from bot.config import channels_id
 router = Router()
 
 
+@router.message(Command("channels"))
+async def get_channels(message: Message):
+    pass
+
+
 @router.message(Command("add_channel"))
 async def add_channel_start(message: Message):
     await message.answer(
