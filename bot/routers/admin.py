@@ -56,13 +56,11 @@ ADMIN_HELP_TEXT = """
 async def help_handler(message: Message):
     await message.answer(ADMIN_HELP_TEXT, parse_mode='HTML')
 
-
 @router.message(Command("add_channel"))
 async def add_channel_start(message: Message):
     await message.answer(
         "Botni kanalga admin qiling, keyin kanaldan xabar forward qiling"
     )
-
 
 @router.message(F.forward_from_chat & (F.forward_from_chat.type == "channel"))
 async def save_channel(message: Message):
