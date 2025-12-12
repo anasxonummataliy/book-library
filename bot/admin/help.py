@@ -5,7 +5,6 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from bot.filters.admin_filter import isAdmin
-from bot.config import channels_id
 
 admin_commands = [
     BotCommand(command="/start", description="Boshlash 🏁"),

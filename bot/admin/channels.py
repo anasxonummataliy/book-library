@@ -23,7 +23,7 @@ async def add_channel_start(message: Message):
 async def save_channel(message: Message):
     channel_id = message.forward_from_chat.id
     if channel_id not in channels_id:
-        channels_id.append(channel_id)
+        # channels_id.append(channel_id) /sqlite ga qo'shish kerak
         await message.answer(f"Kanal qo'shildi! ID: {channel_id}")
     else:
         await message.answer(f"Bu kanal allaqachon qo'shilgan!")
