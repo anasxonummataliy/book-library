@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message, BotCommandScopeChat
 
-from bot.admin.commands import admin_commands 
+from bot.routers.admin import admin_commands , router as admin_router
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,6 +29,7 @@ async def shutdown(bot: Bot):
 
 
 async def main():
+    dp.include_router(admin_router)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
