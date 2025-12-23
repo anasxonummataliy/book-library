@@ -5,21 +5,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from bot.filters.admin_filter import isAdmin
-
-admin_commands = [
-    BotCommand(command="/start", description="Boshlash 🏁"),
-    BotCommand(command="/users", description="Foydalanuvchilar haqida ma'lumot💽"),
-    BotCommand(command="/channels", description="Kanallar ro‘yxati 📢"),
-    BotCommand(command="/add_channel", description="Majburiy kanal qo‘shish ➕"),
-    BotCommand(
-        command="/broadcast", description="Barcha foydalanuvchilarga xabar yuborish 📣"
-    ),
-    BotCommand(command="/reply", description="Biror foydalanuvchiga javob qaytarish ✉️"),
-    BotCommand(command="/help", description="Yordam ❓"),
-]
-
 router = Router()
-router.message.filter(isAdmin())
 
 ADMIN_HELP_TEXT = """
 <b>👑 Admin Panel — Buyruqlar ro‘yxati</b>
