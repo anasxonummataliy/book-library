@@ -1,7 +1,8 @@
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
-    db_url: str = "sqlite+aiosqlite:///./books.db"
+    db_url: str = "sqlite+aiosqlite:///./bot/book.sqlite3"
+
 
 settings = Settings()
-channels_id = []
