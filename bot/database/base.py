@@ -1,6 +1,8 @@
-from bot.database.session import get_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import Column, DateTime, func
 from sqlalchemy.orm import DeclarativeBase, declared_attr
+
+from bot.config import settings as conf
 
 
 class Base(DeclarativeBase):
@@ -13,6 +15,13 @@ class Base(DeclarativeBase):
         return Column(DateTime, default=func.now(), onupdate=func.now())
 
 
-async def create_db_and_tables():
-    async with get_async_engine().begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+class AsyncDatabseSession():
+    def __init__(self):
+        self._session = None
+        self._engine = None
+
+    def __getattr__(self, name):
+        return getattr(self._session, name)
+
+    def init(self):
+        self._engine = create_async_engine(conf.db_url)
