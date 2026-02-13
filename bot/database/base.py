@@ -27,5 +27,10 @@ class AsyncDatabseSession:
     def init(self):
         self._engine = create_async_engine(conf.db_url)
         self._session = sessionmaker(
-            self._engine,
+            self._engine, expire_on_commit=False, class_=AsyncSession
         )
+
+    async def create_all(self):
+        async with self._engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all())
+
