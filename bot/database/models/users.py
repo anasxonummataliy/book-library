@@ -2,10 +2,10 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, String, BigInteger, Boolean, DateTime
-from bot.database.base import Base
+from bot.database.base import TimeBasedModel
 
 
-class User(Base):
+class User(TimeBasedModel):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

@@ -10,9 +10,9 @@ from aiogram.types import Message, BotCommandScopeChat
 from bot.middlewares.activity import UserActivityMiddleware
 from bot.middlewares.channel import IsJoinChannelMiddleware
 
-from bot.admin.start import admin_commands
+from bot.admin.commands import admin_commands
 from bot.admin import admin_router
-
+from bot.database.base import db
 
 from dotenv import load_dotenv
 
@@ -26,6 +26,7 @@ dp = Dispatcher()
 
 @dp.startup()
 async def startup(bot: Bot):
+    await db.create_all()
     await bot.set_my_commands(
         commands=admin_commands, scope=BotCommandScopeChat(chat_id=ADMIN)
     )

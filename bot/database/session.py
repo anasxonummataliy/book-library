@@ -6,19 +6,19 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from bot.config import settings
+from bot.config import conf
 
 
 @cache
 def get_async_engine():
     return create_async_engine(
-        url=settings.db_url, pool_size=3, max_overflow=5, future=True
+        url=conf.db_url, pool_size=3, max_overflow=5, future=True
     )
 
 
 @cache
 def get_sync_engine():
-    sync_url = settings.db_url.replace("sqlite+aiosqlite://", "sqlite:///")
+    sync_url = conf.db_url.replace("sqlite+aiosqlite://", "sqlite:///")
     return create_engine(sync_url, pool_pre_ping=True)
 
 
