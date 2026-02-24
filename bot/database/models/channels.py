@@ -1,9 +1,9 @@
 from sqlalchemy import Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
-from bot.database.base import Base
+from bot.database.base import BaseModel
 
 
-class Channel(Base):
+class Channel(BaseModel):
     __tablename__ = "channels"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

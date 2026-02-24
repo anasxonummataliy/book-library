@@ -78,6 +78,10 @@ class AbstractClass:
         return (await db.execute(select(cls).where(cls.id == _id))).scalar()
 
     @classmethod
+    async def get_with_tg_id(cls, tg_id: int):
+        return (await db.execute(select(cls).where(cls.tg_id == tg_id))).scalar()
+
+    @classmethod
     async def create(cls, **kwargs):
         try:
             obj = cls(**kwargs)

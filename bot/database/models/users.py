@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, String, BigInteger, Boolean, DateTime
+
 from bot.database.base import TimeBasedModel
 
 
