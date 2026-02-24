@@ -13,15 +13,15 @@ async def get_channels(message: Message):
     if not channels:
         await message.answer("Hozircha kanal qo'shilmagan!")
         return
-    channel_list = "\n".join(
+    channel_list = "\n\n".join(
         [
+            f"━━━━━━━━━━━━━━━\n"
             f"📢 <b>{c.channel_title}</b>\n"
-            f"🆔 ID: <code>{c.tg_id}</code>\n"
-            f"👤 Username: @{c.channel_username if c.channel_username else 'yo‘q'}"
+            f"🆔 <code>{c.tg_id}</code>\n"
+            f"👤 @{c.channel_username if c.channel_username else 'yo‘q'}"
             for c in channels
         ]
     )
-
     await message.answer(f"Kanallar ro'yxati:\n{channel_list}", parse_mode="HTML")
 
 
