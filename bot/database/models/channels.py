@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import Integer, String, Boolean, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 from bot.database.base import BaseModel
 
@@ -7,7 +7,7 @@ class Channel(BaseModel):
     __tablename__ = "channels"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    tg_id: Mapped[int] = mapped_column(Integer)
+    tg_id: Mapped[int] = mapped_column(BigInteger)
     channel_link: Mapped[str] = mapped_column(String, nullable=True)
     channel_username: Mapped[str] = mapped_column(String, nullable=True)
     channel_title: Mapped[str] = mapped_column(String, nullable=False)

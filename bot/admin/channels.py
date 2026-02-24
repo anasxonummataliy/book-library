@@ -9,11 +9,20 @@ router = Router()
 
 @router.message(Command("channels"))
 async def get_channels(message: Message):
-    channels = await Channel.get()
+    channels = await Channel.get_all()
+    if not channels:
+        await message.answer("Hozircha kanal qo'shilmagan!")
+        return
     channel_list = "\n".join(
-        [f"ID: {channel.id}, Name: {channel.name}" for channel in channels]
+        [
+            f"📢 <b>{c.channel_title}</b>\n"
+            f"🆔 ID: <code>{c.tg_id}</code>\n"
+            f"👤 Username: @{c.channel_username if c.channel_username else 'yo‘q'}"
+            for c in channels
+        ]
     )
-    await message.answer(f"Kanallar ro'yxati:\n{channel_list}")
+
+    await message.answer(f"Kanallar ro'yxati:\n{channel_list}", parse_mode="HTML")
 
 
 @router.message(Command("add_channel"))
