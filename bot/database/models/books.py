@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-class Books(BaseModel):
+class Book(BaseModel):
     __tablename__ = "books"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

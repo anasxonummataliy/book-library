@@ -7,14 +7,17 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message, BotCommandScopeChat
-from bot.middlewares.activity import UserActivityMiddleware
-from bot.middlewares.channel import IsJoinChannelMiddleware
+from dotenv import load_dotenv
 
-from bot.admin.commands import admin_commands
 from bot.admin import admin_router
 from bot.database.base import db
+from bot.admin.commands import admin_commands
+from bot.middlewares import (
+    UserActivityMiddleware,
+    IsJoinChannelMiddleware,
+    UserSaveMiddleware,
+)
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -39,8 +42,9 @@ async def shutdown(bot: Bot):
 
 
 async def main():
-    dp.message.middleware(IsJoinChannelMiddleware)
-    dp.message.middleware(UserActivityMiddleware)
+    dp.message.middleware(IsJoinChannelMiddleware())
+    dp.message.middleware(UserActivityMiddleware())
+    dp.message.middleware(UserSaveMiddleware())
     dp.include_router(admin_router)
     await dp.start_polling(bot)
 
