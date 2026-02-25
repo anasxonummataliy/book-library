@@ -10,6 +10,7 @@ main_router = Router()
 user_commands = [
     BotCommand(command="/start", description="Boshlash 🏁"),
     BotCommand(command="/search", description="Kitob qidirish 🔎"),
+    BotCommand(command="/books", description="Barcha kitoblarni ko‘rish 📚"),
     BotCommand(command="/help", description="Yordam ❓"),
     BotCommand(command="/about", description="Bot haqida ℹ️"),
     BotCommand(command="/contact", description="Admin bilan bog‘lanish ✉️"),

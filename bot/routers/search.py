@@ -3,9 +3,11 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.filters import Command
 
 from bot.repo import BookRepository
 from bot.database.models import Book
+from bot.database.base import db
 
 search_router = Router()
 
@@ -14,7 +16,7 @@ class SearchBook(StatesGroup):
     waiting_for_query = State()
 
 
-@search_router.message(commands=["search"])
+@search_router.message(Command("search"))
 async def search_command(message: Message, state: FSMContext):
 
     await message.answer("🔎 Kitob nomini kiriting:")
@@ -27,7 +29,7 @@ async def process_search(message: Message, state: FSMContext):
 
     query = message.text
 
-    books: list[Book] = await BookRepository.get_all_books()
+    books: list[Book] = await BookRepository(db=db).get_all_books()
 
     if not books:
         await message.answer("Kitob topilmadi ❌")
@@ -50,7 +52,7 @@ async def book_details(callback):
 
     book_id = int(callback.data.split("_")[1])
 
-    book: Book = await BookRepository.get_book(book_id)
+    book: Book = await BookRepository(db).get_book(book_id)
 
     text = (
         f"📖 <b>{book.title}</b>\n"
