@@ -56,7 +56,7 @@ class AsyncDatabaseSession:
             await conn.run_sync(Base.metadata.drop_all)
 
 
-db = AsyncDatabaseSession()
+db: AsyncSession = AsyncDatabaseSession()
 db.init()
 
 
