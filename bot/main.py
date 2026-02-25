@@ -10,6 +10,7 @@ from aiogram.types import Message, BotCommandScopeChat
 from dotenv import load_dotenv
 
 from bot.admin import admin_router
+from bot.routers import user_router
 from bot.database.base import db
 from bot.admin.commands import admin_commands
 from bot.middlewares import (
@@ -46,6 +47,7 @@ async def main():
     dp.message.middleware(UserActivityMiddleware())
     dp.message.middleware(UserSaveMiddleware())
     dp.include_router(admin_router)
+    dp.include_router(user_router)
     await dp.start_polling(bot)
 
 
