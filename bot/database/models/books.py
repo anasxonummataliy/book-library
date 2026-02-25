@@ -16,3 +16,4 @@ class Book(BaseModel):
     file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     language: Mapped[str] = mapped_column(String(10), default="en")
     description: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+
