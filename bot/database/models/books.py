@@ -5,9 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from bot.database.base import BaseModel
+from bot.repo.book_repo import BookRepository
 
 
-class Book(BaseModel):
+class Book(BaseModel, BookRepository):
     __tablename__ = "books"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

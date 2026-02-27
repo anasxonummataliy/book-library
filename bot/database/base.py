@@ -3,8 +3,13 @@ from typing import Optional
 from datetime import datetime
 from sqlalchemy.orm.attributes import Mapped
 from sqlalchemy.types import BigInteger, DateTime
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncAttrs, AsyncSession
-from sqlalchemy.orm import DeclarativeBase, declared_attr, mapped_column, sessionmaker
+from sqlalchemy.ext.asyncio import (
+    create_async_engine,
+    AsyncAttrs,
+    AsyncSession,
+    async_sessionmaker,
+)
+from sqlalchemy.orm import DeclarativeBase, declared_attr, mapped_column
 from sqlalchemy import (
     and_,
     select,
@@ -41,7 +46,7 @@ class AsyncDatabaseSession:
 
     def init(self):
         self._engine = create_async_engine(conf.db.db_url)
-        self._session = sessionmaker(
+        self._session = async_sessionmaker(
             self._engine,
             expire_on_commit=False,
             class_=AsyncSession,
@@ -152,6 +157,6 @@ class TimeBasedModel(BaseModel):
     __abstract__ = True
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now(), onupdate=datetime.now()
+        DateTime, default=datetime.now, onupdate=datetime.now
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())

@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -29,7 +29,7 @@ async def process_search(message: Message, state: FSMContext):
 
     query = message.text
 
-    books: list[Book] = await BookRepository(db=db).get_all_books()
+    books: list[Book] = await Book(db=db).get_all_books()
 
     if not books:
         await message.answer("Kitob topilmadi ❌")
@@ -48,7 +48,7 @@ async def process_search(message: Message, state: FSMContext):
 
 
 @search_router.callback_query(F.data.startswith("book_"))
-async def book_details(callback):
+async def book_details(callback: CallbackQuery):
 
     book_id = int(callback.data.split("_")[1])
 

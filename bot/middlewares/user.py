@@ -1,11 +1,12 @@
 from aiogram import BaseMiddleware
+from aiogram.types import Message
 
 from bot.database.models.users import User
 from bot.database.session import get_async_session_context
 
 
 class UserSaveMiddleware(BaseMiddleware):
-    async def __call__(self, handler, event, data):
+    async def __call__(self, handler, event: Message, data):
         users = await User.get_all()
         user_id = event.from_user.id
 

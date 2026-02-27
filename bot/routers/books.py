@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.repo import BookRepository
+from bot.database.models.books import Book
 from bot.database.base import db
 
 books_router = Router()
@@ -18,11 +18,10 @@ BOOKS_PER_PAGE = 10
 @books_router.message(Command("books"))
 async def books_handler(message: Message):
 
-    repo = BookRepository(db)
     page = 0
     offset = page * BOOKS_PER_PAGE
 
-    books = await repo.get_books_paginated(limit=BOOKS_PER_PAGE, offset=offset)
+    books = await Book.get_books_paginated(db=db, limit=BOOKS_PER_PAGE, offset=offset)
 
     if not books:
         await message.answer("Kitob topilmadi ❌")
@@ -33,7 +32,6 @@ async def books_handler(message: Message):
     for book in books:
         kb.button(text=f"{book.title} — {book.author}", callback_data=f"book_{book.id}")
 
-    # ✅ Next button
     kb.button(text="Keyingi ➡️", callback_data=f"books_page_{page+1}")
 
     kb.adjust(1)
@@ -46,8 +44,7 @@ async def books_pagination_handler(callback: CallbackQuery):
     page = int(callback.data.split("_")[-1])
     offset = page * BOOKS_PER_PAGE
 
-    repo = BookRepository(db)
-    books = await repo.get_books_paginated(limit=BOOKS_PER_PAGE, offset=offset)
+    books = await Book.get_books_paginated(db=db, limit=BOOKS_PER_PAGE, offset=offset)
 
     if not books:
         await callback.answer("Boshqa kitob yo‘q ❌", show_alert=True)

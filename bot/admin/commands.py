@@ -2,7 +2,7 @@ from aiogram.types import BotCommand
 
 admin_commands = [
     BotCommand(command="/start", description="Boshlash 🏁"),
-    BotCommand(command="/users", description="Foydalanuvchilar haqida ma'lumot💽"),
+    BotCommand(command="/statistic", description="Foydalanuvchilar haqida ma'lumot💽"),
     BotCommand(command="/channels", description="Kanallar ro‘yxati 📢"),
     BotCommand(command="/add_channel", description="Majburiy kanal qo‘shish ➕"),
     BotCommand(
