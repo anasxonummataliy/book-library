@@ -29,7 +29,7 @@ async def process_search(message: Message, state: FSMContext):
 
     query = message.text
 
-    books: list[Book] = await Book(db=db).get_all_books()
+    books: list[Book] = await Book().search_books(db, query)
 
     if not books:
         await message.answer("Kitob topilmadi ❌")

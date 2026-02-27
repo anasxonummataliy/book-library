@@ -31,6 +31,7 @@ async def about_handler(message: Message):
         "📚 <b>Kitob kutubxonasi botiga xush kelibsiz!</b>\n\n"
         "Bu bot orqali siz turli janrlardagi kitoblarni qidirishingiz, "
         "ular haqida ma'lumot olishingiz va o'qish uchun havolalarni topishingiz mumkin.\n\n"
+        "📕 Barcha kitoblarni ko'rish uchun /books buyrug'ini ishlating.\n"
         "🔍 Kitob qidirish uchun /search buyrug'ini ishlating.\n"
         "❓ Yordam uchun /help buyrug'ini ishlating."
     )
