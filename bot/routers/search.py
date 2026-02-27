@@ -52,7 +52,7 @@ async def book_details(callback: CallbackQuery):
 
     book_id = int(callback.data.split("_")[1])
 
-    book: Book = await BookRepository(db).get_book(book_id)
+    book: Book = await Book().get_book(db, book_id)
 
     text = (
         f"📖 <b>{book.title}</b>\n"

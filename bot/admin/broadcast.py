@@ -6,6 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 from bot.database.models import User
+from bot.config import conf
 
 router = Router()
 
@@ -25,9 +26,8 @@ async def broadcast_handler(message: Message, state: FSMContext):
     users = await User.get_all()
     for user in users:
         try:
-            await message.bot.send_message(
-                user.tg_id, message.text
-            )
+            if user.tg_id != int(conf.bot.ADMIN):
+                await message.bot.send_message(user.tg_id, message.text)
             await asyncio.sleep(0.1)
         except Exception as e:
             print(f"Xatolik yuz berdi: {e}")
