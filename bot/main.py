@@ -12,7 +12,7 @@ from bot.admin import admin_router
 from bot.routers import user_router, user_commands
 from bot.database.base import db
 from bot.admin.commands import admin_commands
-from bot.inlinemode import inline_router
+from bot.inlinemode import inline_router, book_router
 from bot.middlewares import (
     UserActivityMiddleware,
     IsJoinChannelMiddleware,
@@ -50,9 +50,9 @@ async def main():
     dp.message.middleware(IsJoinChannelMiddleware())
     dp.message.middleware(UserActivityMiddleware())
     dp.message.middleware(UserSaveMiddleware())
+    dp.include_routers(inline_router, book_router)
     dp.include_router(admin_router)
     dp.include_router(user_router)
-    dp.include_router(inline_router)
     await dp.start_polling(bot)
 
 

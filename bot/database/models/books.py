@@ -28,3 +28,7 @@ class Book(BaseModel, BookRepository):
             select(cls).where(cls.title.ilike(f"{text}%")).limit(limit).offset(offset)
         )
         return result.scalars().all()
+
+    @classmethod
+    async def get_by_id(cls, session, book_id: int) -> "Book | None":
+        return await session.get(cls, book_id)
