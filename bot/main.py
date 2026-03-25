@@ -5,12 +5,11 @@ import asyncio
 
 
 from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart
-from aiogram.types import Message, BotCommandScopeChat
+from aiogram.types import BotCommandScopeAllPrivateChats, BotCommandScopeChat
 from dotenv import load_dotenv
 
 from bot.admin import admin_router
-from bot.routers import user_router
+from bot.routers import user_router, user_commands
 from bot.database.base import db
 from bot.admin.commands import admin_commands
 from bot.inlinemode import inline_router
@@ -35,6 +34,10 @@ async def startup(bot: Bot):
     await bot.set_my_commands(
         commands=admin_commands, scope=BotCommandScopeChat(chat_id=ADMIN)
     )
+    await bot.set_my_commands(
+        commands=user_commands, scope=BotCommandScopeAllPrivateChats()
+    )
+
     await bot.send_message(chat_id=ADMIN, text="Bot started✅")
 
 

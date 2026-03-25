@@ -61,7 +61,7 @@ class AsyncDatabaseSession:
             await conn.run_sync(Base.metadata.drop_all)
 
 
-db: AsyncSession = AsyncDatabaseSession()
+db = AsyncDatabaseSession()
 db.init()
 
 
@@ -73,6 +73,20 @@ class AbstractClass:
         except Exception as e:
             await db.rollback()
             logging.info(f"postgres commit error: {e}")
+
+    @classmethod
+    async def get_all(cls):
+        return (await db.execute(select(cls))).scalars().all()
+
+    @classmethod
+    async def get_with_limit(
+        cls,
+        limit,
+        offset,
+    ):
+        return (
+            (await db.execute(select(cls).limit(limit).offset(offset))).scalars().all()
+        )
 
     @classmethod
     async def get_all(cls):

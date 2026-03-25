@@ -2,15 +2,16 @@ from aiogram import Router, Bot
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
 from aiogram.types import BotCommand
-from aiogram.types import BotCommandScopeChat
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
+
+
+from bot.database.models import User
 
 main_router = Router()
 
 
 user_commands = [
     BotCommand(command="/start", description="Boshlash 🏁"),
-    BotCommand(command="/search", description="Kitob qidirish 🔎"),
-    BotCommand(command="/books", description="Barcha kitoblarni ko‘rish 📚"),
     BotCommand(command="/help", description="Yordam ❓"),
     BotCommand(command="/about", description="Bot haqida ℹ️"),
     BotCommand(command="/contact", description="Admin bilan bog‘lanish ✉️"),
@@ -19,10 +20,24 @@ user_commands = [
 
 @main_router.message(CommandStart())
 async def handle_message(message: Message, bot: Bot):
-    await bot.set_my_commands(
-        user_commands, BotCommandScopeChat(chat_id=message.chat.id)
+    flag = await User.get_with_tg_id(message.chat.id)
+    ikm = InlineKeyboardBuilder()
+    ikm.add(
+        InlineKeyboardButton(
+            text="🔍 Kitob qidirish",
+            switch_inline_query_current_chat="",
+        )
     )
-    await message.answer("Bizning botimizga xush kelibsiz!")
+    if flag is None:
+        await message.answer(
+            "Assalomu alaykum, bizning botimizga xush kelibsiz!",
+            reply_markup=ikm.as_markup(),
+        )
+    else:
+        await message.answer(
+            "Kitob qidirish uchun pastdagi tugmani bosishingiz mumkin!",
+            reply_markup=ikm.as_markup(),
+        )
 
 
 @main_router.message(Command("about"))
@@ -31,8 +46,6 @@ async def about_handler(message: Message):
         "📚 <b>Kitob kutubxonasi botiga xush kelibsiz!</b>\n\n"
         "Bu bot orqali siz turli janrlardagi kitoblarni qidirishingiz, "
         "ular haqida ma'lumot olishingiz va o'qish uchun havolalarni topishingiz mumkin.\n\n"
-        "📕 Barcha kitoblarni ko'rish uchun /books buyrug'ini ishlating.\n"
-        "🔍 Kitob qidirish uchun /search buyrug'ini ishlating.\n"
         "❓ Yordam uchun /help buyrug'ini ishlating."
     )
     await message.answer(about_text, parse_mode="HTML")
@@ -48,4 +61,3 @@ async def help_handler(message: Message):
         "✉️ Admin bilan bog‘lanish uchun /contact buyrug'ini ishlating."
     )
     await message.answer(help_text, parse_mode="HTML")
-

@@ -15,7 +15,7 @@ class MessageToAdminState(StatesGroup):
     mess = State()
 
 
-@message_to_admin_router.message(Command("admin"))
+@message_to_admin_router.message(Command("contact"))
 async def message_to_admin_handler(message: Message, state: FSMContext):
     await state.set_state(MessageToAdminState.mess)
     await message.answer("Adminga yuboriladigan xabaringizni kiriting:")

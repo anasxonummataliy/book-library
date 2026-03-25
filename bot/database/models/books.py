@@ -21,9 +21,10 @@ class Book(BaseModel, BookRepository):
     description: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
 
     @classmethod
-    async def filter_startwith(cls, db: AsyncSession, query):
-        return (
-            (await db.execute(select(cls).where(cls.title.ilike(f"{query}%"))))
-            .scalars()
-            .all()
+    async def filter_startwith(
+        cls, session, text: str, limit: int = 50, offset: int = 0
+    ):
+        result = await session.execute(
+            select(cls).where(cls.title.ilike(f"{text}%")).limit(limit).offset(offset)
         )
+        return result.scalars().all()
