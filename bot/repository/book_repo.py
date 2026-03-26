@@ -1,64 +1,81 @@
-from sqlalchemy import select
+from sqlalchemy import select, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from bot.database.models.books import Book
 
 
 class BookRepository:
+
     @classmethod
     async def add_book(
-        cls, db: AsyncSession, title: str, author: str, description: str
-    ):
-        book = cls(title=title, author=author, description=description)
+        cls,
+        db: AsyncSession,
+        title: str,
+        author: str,
+        language: str,
+        description: str | None = None,
+        cover_image_id: str | None = None,
+        file_id: str = "",
+        file_size: int | None = None,
+    ) -> Book:
+        book = Book(
+            title=title,
+            author=author,
+            language=language,
+            description=description,
+            cover_image_id=cover_image_id,
+            file_id=file_id,
+            file_size=file_size,
+        )
         db.add(book)
         await db.commit()
         await db.refresh(book)
         return book
 
     @classmethod
-    async def get_book(cls, db: AsyncSession, book_id: int):
-        query = select(cls).where(cls.id == book_id)
-        result = await db.execute(query)
+    async def get_book(cls, db: AsyncSession, book_id: int) -> Book | None:
+        result = await db.execute(select(Book).where(Book.id == book_id))
         return result.scalar_one_or_none()
 
     @classmethod
     async def get_books_paginated(
         cls, db: AsyncSession, limit: int = 10, offset: int = 0
-    ):
-        query = select(cls).limit(limit).offset(offset)
-        result = await db.execute(query)
+    ) -> list[Book]:
+        result = await db.execute(
+            select(Book).order_by(Book.id.desc()).limit(limit).offset(offset)
+        )
         return result.scalars().all()
 
     @classmethod
-    async def count_books(cls, db: AsyncSession):
-        from sqlalchemy import func
-
-        query = select(func.count(cls.id))
-        result = await db.execute(query)
-        return result.scalar()
+    async def count_books(cls, db: AsyncSession) -> int:
+        result = await db.execute(select(func.count(Book.id)))
+        return result.scalar() or 0
 
     @classmethod
-    async def delete_book(cls, db: AsyncSession, book_id: int):
+    async def delete_book(cls, db: AsyncSession, book_id: int) -> None:
         from sqlalchemy import delete
 
-        query = delete(cls).where(cls.id == book_id)
-        await db.execute(query)
+        await db.execute(delete(Book).where(Book.id == book_id))
         await db.commit()
 
     @classmethod
     async def search_books(
-        cls, db: AsyncSession, query_text: str, limit: int = 10, offset: int = 0
-    ):
-        from sqlalchemy import or_
-
-        query = (
-            select(cls)
+        cls,
+        db: AsyncSession,
+        query_text: str,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> list[Book]:
+        result = await db.execute(
+            select(Book)
             .where(
                 or_(
-                    cls.title.ilike(f"%{query_text}%"),
-                    cls.author.ilike(f"%{query_text}%"),
+                    Book.title.ilike(f"%{query_text}%"),
+                    Book.author.ilike(f"%{query_text}%"),
                 )
             )
+            .order_by(Book.id.desc())
             .limit(limit)
             .offset(offset)
         )
-        result = await db.execute(query)
         return result.scalars().all()

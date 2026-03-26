@@ -1,14 +1,17 @@
-from sqlalchemy import Integer, String, Boolean, BigInteger
+from typing import Optional
+from sqlalchemy import String, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
-from bot.database.base import BaseModel
+
+from bot.database.base import TimeBasedModel
 
 
-class Channel(BaseModel):
+class Channel(TimeBasedModel):
     __tablename__ = "channels"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    tg_id: Mapped[int] = mapped_column(BigInteger)
-    channel_link: Mapped[str] = mapped_column(String, nullable=True)
-    channel_username: Mapped[str] = mapped_column(String, nullable=True)
-    channel_title: Mapped[str] = mapped_column(String, nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    channel_title: Mapped[str] = mapped_column(String(256), nullable=False)
+    channel_username: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    channel_link: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<Channel id={self.tg_id} title={self.channel_title}>"

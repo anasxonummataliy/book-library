@@ -1,26 +1,32 @@
-from aiogram.types import BotCommand
-
-from aiogram import Bot, Router, F
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
 
-from bot.filters.admin_filter import isAdmin
 router = Router()
 
-ADMIN_HELP_TEXT = """
-<b>👑 Admin Panel — Buyruqlar ro‘yxati</b>
+ADMIN_HELP = """
+👑 <b>Admin Panel — Buyruqlar</b>
 
-<b>/start</b> – Botni ishga tushirish 🏁
-<b>/users</b> – Foydalanuvchilar ro‘yxati 📚
-<b>/channels</b> – Majburiy kanallar ro‘yxati 📢
-<b>/add_channel</b> – Majburiy kanal qo‘shish ➕
-<b>/broadcast</b> – Barcha foydalanuvchilarga xabar yuborish 📣
-<b>/reply</b> – Biror foydalanuvchiga xabar yuborish ✉️
+📚 <b>Kitoblar:</b>
+<b>/start</b> → Panel va kitob qo'shish tugmasi
 
-<i>⚙️ Ushbu menyu faqat adminlar uchun mo‘ljallangan.</i>
+📢 <b>Kanallar:</b>
+<b>/channels</b> → Kanallar ro'yxati
+<b>/add_channel</b> → Kanal qo'shish
+
+📊 <b>Statistika:</b>
+<b>/statistic</b> → Foydalanuvchilar statistikasi
+
+📣 <b>Xabar yuborish:</b>
+<b>/broadcast</b> → Barchaga xabar yuborish
+
+✉️ <b>Javob berish:</b>
+Foydalanuvchi xabariga reply qiling — avtomatik jo'natiladi.
+
+<i>⚙️ Faqat admin uchun</i>
 """
 
 
 @router.message(Command("help"))
-async def help_handler(message: Message):
-    await message.answer(ADMIN_HELP_TEXT, parse_mode="HTML")
+async def admin_help(message: Message):
+    await message.answer(ADMIN_HELP, parse_mode="HTML")

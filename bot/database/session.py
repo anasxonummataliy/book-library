@@ -1,25 +1,27 @@
+import os
 from functools import cache
 from contextlib import asynccontextmanager
-from sqlalchemy import create_engine
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
+
 from bot.config import conf
 
 
 @cache
 def get_async_engine():
-    return create_async_engine(
-        url=conf.db.db_url, pool_size=3, max_overflow=5, future=True
+    db_path = conf.db.DB_PATH
+    os.makedirs(
+        os.path.dirname(db_path) if os.path.dirname(db_path) else ".", exist_ok=True
     )
-
-
-@cache
-def get_sync_engine():
-    sync_url = conf.db.db_url.replace("sqlite+aiosqlite://", "sqlite:///")
-    return create_engine(sync_url, pool_pre_ping=True)
+    return create_async_engine(
+        url=conf.db.db_url,
+        connect_args={"check_same_thread": False},
+        echo=False,
+    )
 
 
 @cache
@@ -35,11 +37,11 @@ def get_session_maker() -> async_sessionmaker[AsyncSession]:
 @asynccontextmanager
 async def get_async_session_context():
     session_maker = get_session_maker()
-    async with session_maker() as new_session:
+    async with session_maker() as session:
         try:
-            yield new_session
+            yield session
         except Exception:
-            await new_session.rollback()
+            await session.rollback()
             raise
         finally:
-            await new_session.close()
+            await session.close()

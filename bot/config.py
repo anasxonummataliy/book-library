@@ -1,33 +1,40 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 @dataclass
-class PostgresConfig:
-    PG_USER: str = os.getenv("PG_USER", "")
-    PG_PASS: str = os.getenv("PG_PASS", "")
-    PG_HOST: str = os.getenv("PG_HOST", "localhost")
-    PG_PORT: int = int(os.getenv("PG_PORT", "5432"))
-    PG_DB: str = os.getenv("PG_DB", "")
+class SQLiteConfig:
+    DB_PATH: str = field(default_factory=lambda: os.getenv("DB_PATH", "data/books.db"))
 
     @property
     def db_url(self) -> str:
-        return f"postgresql+asyncpg://{self.PG_USER}:{self.PG_PASS}@{self.PG_HOST}:{self.PG_PORT}/{self.PG_DB}"
+        return f"sqlite+aiosqlite:///{self.DB_PATH}"
 
 
 @dataclass
 class BotConfig:
-    TOKEN = os.getenv("BOT_TOKEN") or ""
-    ADMIN = os.getenv("ADMIN") or ""
+    TOKEN: str = field(default_factory=lambda: os.getenv("TOKEN", ""))
+    ADMINS: list[int] = field(
+        default_factory=lambda: [
+            int(a.strip())
+            for a in os.getenv("ADMINS", "").split(",")
+            if a.strip().isdigit()
+        ]
+    )
 
+    @property
+    def ADMIN(self) -> int:
+        """Birinchi (asosiy) adminni qaytaradi"""
+        return self.ADMINS[0] if self.ADMINS else 0
+    
 
 @dataclass
 class Configuration:
-    db = PostgresConfig()
-    bot = BotConfig()
+    db: SQLiteConfig = field(default_factory=SQLiteConfig)
+    bot: BotConfig = field(default_factory=BotConfig)
 
 
 conf = Configuration()

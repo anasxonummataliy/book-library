@@ -1,8 +1,10 @@
+import os
 import logging
 from typing import Optional
 from datetime import datetime
+
 from sqlalchemy.orm.attributes import Mapped
-from sqlalchemy.types import BigInteger, DateTime
+from sqlalchemy.types import DateTime
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     AsyncAttrs,
@@ -11,6 +13,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase, declared_attr, mapped_column
 from sqlalchemy import (
+    Integer,
     and_,
     select,
     delete as sqlalchemy_delete,
@@ -23,29 +26,37 @@ from bot.config import conf
 class Base(AsyncAttrs, DeclarativeBase):
     @declared_attr.directive
     def __tablename__(cls) -> str:
-        name = cls.__name__[1:]
-        _name = cls.__name__[0]
-        for i in name:
-            if i.isupper():
-                _name += "_"
-            _name += i
-        _name = _name.lower()
-
-        if _name.endswith("y"):
-            _name = _name[:-1] + "ie"
-        return _name + "s"
+        name = cls.__name__
+        result = ""
+        for i, char in enumerate(name):
+            if char.isupper() and i != 0:
+                result += "_"
+            result += char.lower()
+        if result.endswith("y"):
+            result = result[:-1] + "ie"
+        return result + "s"
 
 
 class AsyncDatabaseSession:
     def __init__(self):
-        self._session = None
+        self._session: Optional[AsyncSession] = None
         self._engine = None
 
     def __getattr__(self, name):
         return getattr(self._session, name)
 
     def init(self):
-        self._engine = create_async_engine(conf.db.db_url)
+        # SQLite uchun data papkasini yaratish
+        db_path = conf.db.DB_PATH
+        os.makedirs(
+            os.path.dirname(db_path) if os.path.dirname(db_path) else ".", exist_ok=True
+        )
+
+        self._engine = create_async_engine(
+            conf.db.db_url,
+            echo=False,
+            connect_args={"check_same_thread": False},  # SQLite uchun zarur
+        )
         self._session = async_sessionmaker(
             self._engine,
             expire_on_commit=False,
@@ -72,25 +83,17 @@ class AbstractClass:
             await db.commit()
         except Exception as e:
             await db.rollback()
-            logging.info(f"postgres commit error: {e}")
+            logging.error(f"DB commit error: {e}")
 
     @classmethod
     async def get_all(cls):
         return (await db.execute(select(cls))).scalars().all()
 
     @classmethod
-    async def get_with_limit(
-        cls,
-        limit,
-        offset,
-    ):
+    async def get_with_limit(cls, limit: int, offset: int):
         return (
             (await db.execute(select(cls).limit(limit).offset(offset))).scalars().all()
         )
-
-    @classmethod
-    async def get_all(cls):
-        return (await db.execute(select(cls))).scalars().all()
 
     @classmethod
     async def get(cls, _id: int):
@@ -115,7 +118,10 @@ class AbstractClass:
 
     @classmethod
     async def update(
-        cls, _id: Optional[int] = None, telegram_id: Optional[int] = None, **kwargs
+        cls,
+        _id: Optional[int] = None,
+        telegram_id: Optional[int] = None,
+        **kwargs,
     ):
         if _id is not None:
             query = (
@@ -135,14 +141,17 @@ class AbstractClass:
         await cls.commit()
 
     @classmethod
-    async def delete(cls, _id: Optional[int] = None, telegram_id: Optional[int] = None):
+    async def delete(
+        cls,
+        _id: Optional[int] = None,
+        telegram_id: Optional[int] = None,
+    ):
         if _id is not None:
             query = sqlalchemy_delete(cls).where(cls.id == _id)
         else:
             query = sqlalchemy_delete(cls).where(cls.tg_id == telegram_id)
         await db.execute(query)
         await cls.commit()
-        return (await db.execute(select(cls))).scalars()
 
     @classmethod
     async def filter(cls, **kwargs):
@@ -159,18 +168,19 @@ class AbstractClass:
     async def save_model(self):
         db.add(self)
         await self.commit()
+        await db.refresh(self)
         return self
 
 
 class BaseModel(Base, AbstractClass):
     __abstract__ = True
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
 
 class TimeBasedModel(BaseModel):
     __abstract__ = True
 
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.now, onupdate=datetime.now
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())

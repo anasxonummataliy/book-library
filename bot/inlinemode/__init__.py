@@ -1,2 +1,2 @@
-from .inline import inline_router
-from .book import book_router
+from .inline_handler import inline_router
+from .book_handler import book_router
