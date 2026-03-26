@@ -28,5 +28,5 @@ class Book(TimeBasedModel):
     @property
     def file_size_mb(self) -> str:
         if self.file_size:
-            return f"{self.file_size / (1024 * 1024):.1f} MB"
+            return f"{self.file_size / (1024 * 1024):.2f} MB"
         return "Noma'lum"
