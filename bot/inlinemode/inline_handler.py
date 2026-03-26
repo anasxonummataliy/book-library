@@ -84,8 +84,6 @@ async def inline_book_search(query: InlineQuery):
     results = []
 
     for book in books:
-
-        # Chat ga book_{id} xabar tushadi — bot shu xabarni ushlab kitobni yuboradi
         result = InlineQueryResultArticle(
             id=str(book.id),
             title=f"📚 {book.title}",
@@ -93,9 +91,6 @@ async def inline_book_search(query: InlineQuery):
             input_message_content=InputTextMessageContent(
                 message_text=f"book_{book.id}",
             ),
-            thumbnail_url=f"https://via.placeholder.com/100x140/1a1a2e/ffffff?text=📚",
-            thumbnail_width=100,
-            thumbnail_height=140,
         )
         results.append(result)
 
