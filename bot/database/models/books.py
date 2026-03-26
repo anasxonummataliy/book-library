@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from bot.database.base import BaseModel
-from bot.repo.book_repo import BookRepository
+from bot.repository.book_repo import BookRepository
 
 
 class Book(BaseModel, BookRepository):
